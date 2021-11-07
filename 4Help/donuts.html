@@ -1,0 +1,114 @@
+
+<html>
+<head>
+<title>Winds Diary</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+<!--
+a{text-decoration:none}
+a:hover {color:#FFCC00; text-decoration:none}
+body, table, tr, td, select,input,div,form,textarea {
+font-family: 굴림, 돋움, verdana;
+font-size:9pt;  line-height: 150%;
+}
+#frame{margin-top: 15px; width: 440px;}
+	#left{float: left; width: 130px;}
+	div.heading{font: 20px arial; font-weight: bold; margin-bottom: 5px;}
+	div.subheading{font: 15px 굴림, arial; font-style: italic; margin-bottom: 10px;}
+	div.field{margin-bottom: 5px; text-align: right;}
+-->
+</style>
+<script type="text/javascript">
+function updateOrder(){ //계산하기
+	const TAXRATE=0.0925; //세금 10% 
+	const PRICE1=0.5; //일반 호빵 가격 
+	const PRICE2=300; //야채 호빵 가격
+	//var numCakeDonuts=parseInt(document.getElementById("cakeDonuts").value);
+	//var numGlazeDonuts=parseInt(document.getElementById("glazeDonuts").value);
+	//parseInt(), parseFloat() 문자를 각각 정수, 실수로 변환.
+	var numCakeDonuts=parseDonuts(document.getElementById("cakeDonuts").value);
+	var numGlazeDonuts=parseDonuts(document.getElementById("glazeDonuts").value);
+	//if(isNaN(numCakeDonuts)) numCakeDonuts = 0
+	//if(isNaN(numGlazeDonuts)) numGlazeDonuts = 0
+	// var subTotal = (numCakeDonuts * PRICE1) + (numGlazeDonuts * PRICE2);
+	// var tax = subTotal * TAXRATE;
+	// var total = subTotal + tax;
+	// var sum = (numCakeDonuts * PRICE1) + (numGlazeDonuts * PRICE2);
+	// var subTotal = sum / (1+TAXRATE);
+	// var tax = sum - subTotal;
+	// var total = sum;
+	var subTotal = (numCakeDonuts+numGlazeDonuts)*PRICE1;
+	var tax = subTotal * TAXRATE;
+	var total = subTotal*tax;
+	document.getElementById("subtotal").value = subTotal.toFixed(2)+"$";
+	document.getElementById("tax").value = tax.toFixed(2)+"$";
+	document.getElementById("total").value = total.toFixed(2)+"$";
+	//.toFixed(2) 소수점 2자리로 반올림.
+}
+function parseDonuts(donutString){ //도넛 숫자 처리
+	numDonuts = parseInt(donutString); //일단 정수로 변형
+	if(donutString.indexOf("dozen") != -1) numDonuts *= 12; //dozen이란 단어가 있으면 *12
+	return numDonuts;
+}
+function placeOrder(form){ //서버로 주문 전송
+	if(document.getElementById("name").value == ""){
+		document.getElementById("name").focus();
+		alert("주문시 이름을 입력해 주세요.");
+	}else if(document.getElementById("min").value=="" || 
+		isNaN(document.getElementById("min").value)){
+		document.getElementById("min").focus();
+		alert("받으러 올 시간을 숫자로 입력해 주세요");
+	}else{
+		form.submit();
+	}
+}
+function moveFocus(next){ //엔터키 클릭시 다음 창으로 포커스 넘기기.
+	if(event.keyCode == 13){
+		document.getElementById(next).focus();
+	}
+}
+</script>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000" link="#006699" vlink="#006699" alink="#006699" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="overflow:auto">
+<table width="600" border="0" align="left" cellspacing="0" cellpadding="0" height="100%">
+          <tr> 
+            <td bgcolor="#FFFFFF"><div id="frame"> 
+                <div class="heading">Donuts</div>
+                <!--<div class="subheading">일반 호빵은 250원, 야채 호빵은 300원 입니다.</div>-->
+                <form name="orderform" action="d150205.php" method="POST">
+                  <div class="field"> Name: 
+                    <input type="text" id="name" name="name" value="" onkeydown="moveFocus('cakeDonuts');">
+                  </div>
+                  <div class="field"> # cake Donuts: 
+                    <input type="text" id="cakeDonuts" name="cakedonuts" value="" onchange="updateOrder();" onkeydown="moveFocus('glazeDonuts');"/>
+                  </div>
+                  <div class="field"> # galzed Donuts: 
+                    <input type="text" id="glazeDonuts" name="glazedonuts" value="" onchange="updateOrder();" onkeydown="moveFocus('min');"/>
+                  </div>
+                  <div class="field"> Minutes: 
+                    <input type="text" id="min" name="min" value="" onkeydown="moveFocus('confirm');"/>
+                  </div>
+                  <div class="field"> Subtotal: 
+                    <input type="text" id="subtotal" name="stotal" value="" readonly="readonly"/>
+                  </div>
+                  <div class="field"> Tax: 
+                    <input type="text" id="tax" name="tax" value="" readonly="readonly"/>
+                  </div>
+                  <div class="field"> Total: 
+                    <input type="text" id="total" name="total" value="" readonly="readonly"/>
+                  </div>
+                  <div class="field"> 
+                    <input type="button" id="confirm" value="Place Order" onclick="placeOrder(this.form);">
+                  </div>
+                </form>
+              </div></td>
+          </tr>
+        </table>  <p>&nbsp;</p>
+        <p>&nbsp;</p>
+      </div>
+			</td>
+  </tr>
+</table>
+</body>
+</html>
